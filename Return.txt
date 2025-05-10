@@ -1,0 +1,34 @@
+import os
+
+os.system("pip install yfinance pandas")
+
+import yfinance as yf
+import pandas as pd
+
+def get_stock_data(symbol):
+    data = yf.download(symbol, period="1y")
+    if data.empty:
+        print(f"No data for {symbol}")
+        return None
+    if 'Adj Close' in data.columns:
+        prices = data['Adj Close']
+    elif 'Close' in data.columns:
+        prices = data['Close']
+    else:
+        print("No 'Adj Close' or 'Close' found")
+        return None
+    return prices
+
+def get_returns(pricevec):
+    returns = (pricevec[1:].values / pricevec[:-1].values) - 1
+    return returns
+
+prices = get_stock_data('GS')
+
+if prices is not None:
+    returns = get_returns(prices)
+    returns_df = pd.DataFrame(returns, columns=["Returns"])
+    returns_df['Date'] = prices.index[1:]
+    print(returns_df)
+else:
+    print("Data fetch failed")

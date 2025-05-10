@@ -1,0 +1,29 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+def VaR(r, confidence, principal=1):
+    alpha = 1 - confidence
+    out = principal * abs(np.percentile(r, alpha * 100))
+    return out
+
+def percent_var(r, confidence):
+    alpha = 1 - confidence
+    plt.hist(r, bins=50, alpha=0.75)
+    plt.title("Histogram of Returns")
+    plt.xlabel("Return")
+    plt.ylabel("Frequency")
+    plt.show()
+    out = np.percentile(r, alpha * 100)
+    return abs(out)
+
+returns = np.random.normal(0, 1, 10000)
+percentile_value = np.percentile(returns, 97.72)
+
+r = np.random.normal(0.05, 0.03, 1000000)
+probability2SD = norm.cdf(2)
+my_confidence = probability2SD
+my_percent_var = percent_var(r, my_confidence)
+
+print("Percentile Value:", percentile_value)
+print("Calculated VaR:", my_percent_var)
